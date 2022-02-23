@@ -1,0 +1,35 @@
+list.of.packages <- c("ggplot2", "magrittr", "dplyr",  "rvest","quantmod","xts","packrat","rsconnect",
+                      "tidyverse","stringr","forcats","lubridate","plotly","PerformanceAnalytics","surveillance","rmarkdown","knitr")
+new.packages <- list.of.packages[!(list.of.packages %in% installed.packages()[,"Package"])]
+if(length(new.packages)) install.packages(new.packages)
+
+
+library(ggplot2)
+library(dplyr)
+library(rvest)
+library(quantmod)
+library(xts)
+library(tidyverse)
+library(stringr)
+library(forcats)
+library(lubridate)
+library(plotly)
+library(PerformanceAnalytics)
+library(packrat)
+library(rsconnect)
+library(surveillance)
+library(rmarkdown)
+library(knitr)
+
+
+cass_shipments <- getSymbols("FRGSHPUSM649NCIS", src = "FRED", from = start, to = end)
+cass_expenditures <- getSymbols("FRGEXPUSM649NCIS", src = "FRED", from = start, to = end)
+FTSI <- getSymbols("TSIFRGHTC", src = "FRED", from = start, to = end)
+
+setwd("C:/Users/BURAKK/FCC-FAC/Ag Economics - Data/Agribusiness")
+
+write.csv(cass_shipments, "FRED cass freight index shipments.csv")
+
+write.csv(cass_expenditures, "FRED cass freight index expenditures.csv")
+
+write.csv(FTSI, "FRED freight transportation services index.csv")
