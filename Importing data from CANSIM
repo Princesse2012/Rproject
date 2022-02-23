@@ -17,3 +17,23 @@ setwd("C:/Users/nkapnani/FCC-FAC/Economics - Analysis/Demand index/Data")
 write.csv(df, "Disposable_income_36-10-01142-01.csv")
 DI <- read.csv("Disposable_income_36-10-01142-01.csv")
 View(DI)
+
+######################################################################
+#install package if needed
+install.packages("cansim")
+
+#load package
+library(cansim)
+
+#grab milk production and utlization
+df <- get_cansim("32-10-0113-01") 
+
+
+#change to data frame is you want
+df <- as.data.frame(df)
+
+#set where you want the data to be saved
+setwd("C:/Users/BURAKK/.....")
+
+#write as a csv
+write.csv(df, "Dairy_disposition.csv")
