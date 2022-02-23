@@ -7,7 +7,6 @@ library(cansim)
 #grab milk production and utlization
 df <- get_cansim("36-10-0112-01") 
 
-
 #change to data frame is you want
 df <- as.data.frame(df)
 
