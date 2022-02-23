@@ -1,3 +1,9 @@
+As requested, attached is some R code (with text same code) you can use to pull statcan table data if it not on sharepoint. I am not sure if this the same way Sebastien does it, but it seems to work.
+I also attached some code for pulling FED data from the US. You can use the quantmod package for that. Some of the other packages aren’t needed, but they are ones I have used fairly regularly in the past. Here is an example of the data being pulled.
+
+In speaking with Sebastien, it is recommended we don’t use R in Power BI as it doesn’t load properly when on sharepoint. Run in R, save the data, and load the data into Power BI is desired.
+
+############################################################################
 #install package if needed
 install.packages("cansim")
 
