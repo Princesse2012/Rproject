@@ -1,0 +1,16 @@
+More R info
+Below is a couple of things that should be useful for finding info on packages and auto running scripts. Let me know if you have any questions.
+
+For packages and package documentation
+
+https://cran.r-project.org/. Then Packages on the left, then Table of available packages, sorted by name. 
+if you search “cansim” then click it, you will see a link to download the reference manual and a “getting started link” that usually has good examples.
+
+ 
+
+
+Auto running scripts
+
+If you click on add-ins, and then schedule r scripts at the bottom you can schedule when jobs will run. I think you need to keep R open though.
+
+ 
