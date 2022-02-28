@@ -1,0 +1,447 @@
+
+```{r include=FALSE}
+
+if(set_eval){
+  knitr::opts_chunk$set(echo=FALSE, fig.keep='high', out.width = '95%', fig.align = 'center', warning = FALSE, message = FALSE, results = "asis", root.dir = "C:/Users/pouliots/FCC-FAC/Ag Economics - Data/Ag Macro") 
+}
+  
+if(!set_eval){
+  knitr::opts_chunk$set(echo=FALSE, fig.keep='high', out.width = '95%', fig.align = 'center', warning = FALSE, message = FALSE, results = "asis", eval = FALSE, root.dir = "C:/Users/pouliots/FCC-FAC/Ag Economics - Data/Ag Macro") 
+} 
+
+```
+
+
+The data are accessible through the web using the link `https://fccfac.sharepoint.com/sites/AgEconomics/DATA/Ag Macro/Name_of_file`, where `Name_of_file` includes the `.csv` extension. You need enter your FCC credential to access the data.
+
+## Farm cash receipts
+
+The data for farm cash receipts also contain data specific to some farm sectors. The following contains only the larger aggregate. It is possible to extract data by sector using the raw files.
+
+From Cansim table 32-10-0045. 
+
+- `FCR annual - table 32-10-0045.csv`: FCR data from Cansim.
+- `FCR total - annual.csv`: Total farm cash receipts, annual.
+- `FCR crop - annual.csv`: Crop farm cash receipts, annual.
+- `FCR livestock - annual.csv`: Livestock farm cash receipts, annual.
+  
+
+From Cansim table 32-10-0046:
+
+- `FCR quarterly - table 32-10-0046.csv`: FCR data from Cansim.
+- `FCR total - quarterly.csv`: Total farm cash receipts, quarterly.
+- `FCR crop - quarterly.csv`: Crop farm cash receipts, quarterly.
+- `FCR livestock - quarterly.csv`: Livestock farm cash receipts, quarterly.
+
+
+```{r FCR}
+
+
+if(32100045 %in% sc_changed_tb$productId){
+  
+  # Annual data
+  fcr_y_raw <- get_cansim("32-10-0045") %>%
+    tbl_df() 
+  
+  fcr_y <- fcr_y_raw %>%
+    mutate(year = REF_DATE) %>%
+    dplyr::filter(`Type of cash receipts` == "Total farm cash receipts") %>%
+    dplyr::select(year, GEO, VALUE) %>%
+    spread(GEO, VALUE) %>%
+    arrange(desc(year)) %>%
+    dplyr::select(year, Canada, everything())
+  
+  
+  fcr_y_crop <- fcr_y_raw %>%
+    mutate(year = REF_DATE) %>%
+    dplyr::filter(`Type of cash receipts` == "Total crop receipts") %>%
+    dplyr::select(year, GEO, VALUE) %>%
+    spread(GEO, VALUE) %>%
+    arrange(desc(year)) %>%
+    dplyr::select(year, Canada, everything())
+  
+  fcr_y_live <- fcr_y_raw %>%
+    mutate(year = REF_DATE) %>%
+    dplyr::filter(`Type of cash receipts` == "Total livestock and livestock product receipts") %>%
+    dplyr::select(year, GEO, VALUE) %>%
+    spread(GEO, VALUE) %>%
+    arrange(desc(year)) %>%
+    dplyr::select(year, Canada, everything())
+  
+  write_csv(fcr_y_raw, "FCR annual - table 32-10-0045.csv")
+  write_csv(fcr_y, "FCR total - annual.csv")
+  write_csv(fcr_y_crop, "FCR crop - annual.csv")
+  write_csv(fcr_y_live, "FCR livestock - annual.csv")
+  
+  ### Quarterly data ###
+  fcr_q_raw <- get_cansim("32-10-0046") %>%
+    tbl_df() 
+  
+  fcr_q <- fcr_q_raw %>%
+    mutate(date = ymd(paste(REF_DATE, "01", sep = "-"))) %>%
+    dplyr::filter(`Type of cash receipts` == "Total farm cash receipts") %>%
+    dplyr::select(date, GEO, VALUE) %>%
+    spread(GEO, VALUE) %>%
+    arrange(desc(date)) %>%
+    dplyr::select(date, Canada, everything())
+  
+  fcr_q_crop <- fcr_q_raw %>%
+    mutate(date = ymd(paste(REF_DATE, "01", sep = "-"))) %>%
+    dplyr::filter(`Type of cash receipts` == "Total crop receipts") %>%
+    dplyr::select(date, GEO, VALUE) %>%
+    spread(GEO, VALUE) %>%
+    arrange(desc(date)) %>%
+    dplyr::select(date, Canada, everything())
+  
+  fcr_q_live <- fcr_q_raw %>%
+    mutate(date = ymd(paste(REF_DATE, "01", sep = "-"))) %>%
+    dplyr::filter(`Type of cash receipts` == "Total livestock and livestock product receipts") %>%
+    dplyr::select(date, GEO, VALUE) %>%
+    spread(GEO, VALUE) %>%
+    arrange(desc(date)) %>%
+    dplyr::select(date, Canada, everything())
+  
+  write_csv(fcr_q_raw, "FCR quarterly - table 32-10-0046.csv")
+  write_csv(fcr_q, "FCR total - quarterly.csv")
+  write_csv(fcr_q_crop, "FCR crop - quarterly.csv")
+  write_csv(fcr_q_live, "FCR livestock - quarterly.csv")  
+
+  
+}
+
+
+```
+
+## Farm income
+
+The data for farm income also contain data specific to some farm sectors. The following contain only the larger aggregate. It is possible to extract data by sector using the raw files.
+
+From Cansim table 32-10-0052. 
+
+- `Farm income - table 32-10-0052.csv`: Annual farm income data from Cansim.
+- `Farm income.csv`: Farm income data by province, annual.
+
+```{r farm_income}
+
+# We will update the data when the quarterly FCR data are updated
+
+if(32100052 %in% sc_changed_tb$productId){
+  
+  # Annual data
+  fi_raw <- get_cansim("32-10-0052") %>%
+    tbl_df() 
+  
+  fi <- fi_raw %>%
+    mutate(year = REF_DATE) %>%
+    dplyr::select(year, `Income components`, GEO, VALUE) %>%
+    spread(GEO, VALUE) %>%
+    arrange(desc(year)) %>%
+    dplyr::select(year, `Income components`, Canada, everything())
+  
+  write_csv(fi_raw, "Farm income - table 32-10-0052.csv")
+  write_csv(fi, "Farm income.csv")
+
+}
+
+
+```
+
+
+## Farm debt outstanding
+
+The data for annual farm debt outstanding.
+
+From Cansim table 32-10-0051:
+
+- `FDO - table 32-10-0051.csv`: Raw annual farm debt outstanding from Statistics Canada.
+- `FDO - annual.csv`: Farm debt outstanding with the types of lenders as columns. Provinces are in a single column.
+- `FDO total - annual.csv`: Total farm debt outstanding with provinces as columns.
+
+
+```{r FDO}
+
+if(32100051 %in% sc_changed_tb$productId){
+  
+  # Annual data
+  fdo_raw <- get_cansim("32-10-0051") %>%
+    tbl_df() 
+  
+  fdo_y <- fdo_raw %>%
+    mutate(year = REF_DATE) %>%
+    dplyr::select(year, GEO, `Type of lender`, VALUE) %>%
+    spread(`Type of lender`, VALUE) %>%
+    rename(region = GEO) %>%
+    dplyr::select(year, region, `Farm debt outstanding, total`, `Federal government agencies`, everything()) %>%
+    arrange(desc(year)) 
+  
+  fdo_total <- fdo_y %>%
+    dplyr::select(year, region, `Farm debt outstanding, total`) %>%
+    spread(region, `Farm debt outstanding, total`) %>% 
+    dplyr::select(year, Canada, everything()) %>%
+    arrange(desc(year)) 
+  
+  write_csv(fdo_raw, "FDO - table 32-10-0051.csv")
+  write_csv(fdo_y, "FDO - annual.csv")
+  write_csv(fdo_total, "FDO total - annual.csv")
+  
+  
+}
+
+
+```
+
+
+## Farm land value 
+
+- `FLV - table 32-10-0047.csv`: Value per acre of farm land and buildings at July 1 from Statistics Canada table 32-10-0047.
+
+
+```{r FLV}
+
+if(32100047 %in% sc_changed_tb$productId){
+  
+  # Annual data
+  flv_raw <- get_cansim("32-10-0047") %>%
+    tbl_df() 
+  
+  write_csv(flv_raw, "FLV - table 32-10-0047.csv")
+  
+}
+
+```
+
+## Farm product price index (FPPI)
+
+The data for industrial price index (2007 = 100) are from Cansim table 32-10-0098. The data are updated when a change is detected on Statistics Canada website. 
+
+- `FPPI monthly - table 32-10-0098.csv`: Statistics Canada table 32-10-0098.
+- `FPPI Canada - monthly.csv`: Monthly FPPI data for Canada for selected commodity groups.
+- `FPPI total - monthly.csv`: Monthly total FPPI data by provinces and regions.
+
+
+```{r FPPI}
+
+if(32100098 %in% sc_changed_tb$productId){
+  
+  # Data
+  fppi_raw <- get_cansim("32-10-0098") %>%
+    tbl_df() 
+  
+  write_csv(fppi_raw, "FPPI monthly - table 32-10-0098.csv")
+  
+  fppi <- fppi_raw %>%
+    mutate(date = as_date(paste(REF_DATE, "01", sep = "-")),
+           var = `Commodity groups`) %>%
+    dplyr::filter(var %in% c("Total index", "Total crops", "Total livestock and animal products"),
+                  GEO == "Canada") %>%
+    dplyr::select(date, var, VALUE) %>%
+    distinct() %>%
+    spread(var, VALUE) %>%
+    arrange(desc(date)) %>%
+    dplyr::select(date, `Total index`, `Total crops`, `Total livestock and animal products`)
+  
+  write_csv(fppi, "FPPI Canada - monthly.csv")
+  
+  fppi <- fppi_raw %>%
+    mutate(date = as_date(paste(REF_DATE, "01", sep = "-")),
+           var = `Commodity groups`) %>%
+    dplyr::filter(var %in% c("Total index")) %>%
+    dplyr::select(date, GEO, VALUE) %>%
+    distinct() %>%
+    spread(GEO, VALUE) %>%
+    arrange(desc(date)) %>%
+    dplyr::select(date, Canada, everything())
+  
+  write_csv(fppi, "FPPI total - monthly.csv")
+  
+
+}
+
+
+```
+
+
+## Industrial product price index (IPPI)
+
+The data for industrial price index (2010 = 100) are from Statistics Canada table 18-10-0032. The data are not available by province. The data are updated when a change is detected on Statistics Canada website. 
+
+- `IPPI monthly - table 18-10-0032.csv`: Statistics Canada table 18-10-0032.
+- `IPPI - monthly.csv`: Monthly IPPI data for selected categories.
+
+```{r IPPI}
+
+if(18100032 %in% sc_changed_tb$productId){
+  
+  # Data
+  ippi_raw <- get_cansim("18-10-0032") %>%
+    tbl_df() 
+  
+  write_csv(ippi_raw, "IPPI monthly - table 18-10-0032.csv")
+  
+  ippi <- ippi_raw %>%
+    mutate(date = as_date(paste(REF_DATE, "01", sep = "-")),
+           var = `North American Industry Classification System (NAICS)`) %>%
+    dplyr::filter(str_detect(var, "Food manufacturing") |
+                  str_detect(var, "Agricultural implement manufacturing") |
+                  str_detect(var, "Pesticide, fertilizer and other agricultural chemical manufacturing") |
+                  str_detect(var, "Beverage and tobacco product manufacturing")) %>%
+    dplyr::select(date, var, VALUE) %>%
+    distinct() %>%
+    mutate(var = case_when(str_detect(var, "Food manufacturing") ~ "Food manufacturing [311]",
+                           str_detect(var, "Beverage and tobacco product manufacturing") ~ "Beverage and tobacco product manufacturing [312]",
+                           str_detect(var, "Pesticide, fertilizer and other agricultural chemical manufacturing") ~ "Pesticide, fertilizer and other agricultural chemical manufacturing [3253]",
+                           str_detect(var, "Agricultural implement manufacturing") ~ "Agricultural implement manufacturing [33311]")) %>%
+    spread(var, VALUE) %>%
+    arrange(desc(date)) %>%
+    dplyr::filter(!is.na(`Food manufacturing [311]`))
+  
+  #write_csv(ippi_raw, "IPPI - raw.csv")
+  write_csv(ippi, "IPPI - monthly.csv")
+  
+}
+
+
+```
+
+
+## Agri-food trade by NAPCS categories
+
+The data are from Statistics Canada table 12-10-0120. The data are not available by province by North American Product Classification System (NAPCS) codes. The data are updated when a change is detected on Statistics Canada website. The data table from Statistics Canada contains the latest (9) revisions. The data saved contain only the most recent revision and do not break down exports by country.
+
+- `Trade data monthly - table 12-10-0120.csv`: Monthly trade data for Farm, fishing and intermediate food products. Includes imports and exports, not seasonally adjusted and measured based on customs (vs balance of payments). In million dollars.
+- `Ag and food imports - monthly.csv`: Monthly ag and food imports by NAPCS categories.
+- `Ag and food exports - monthly.csv`: Monthly ag and food exports by NAPCS categories.
+
+```{r trade_naics}
+
+if(12100120 %in% sc_changed_tb$productId){
+  
+  # Data
+  trade_raw <- get_cansim("12-10-0120") %>%
+    tbl_df() 
+  
+  max_date <- max(as_date(trade_raw$Release, format = "%B %d, %Y", tz = "America/New_York"))
+  
+  trade <- trade_raw %>%
+    mutate(date = as_date(paste(REF_DATE, "01", sep = "-")),
+           Release = as_date(Release, format = "%B %d, %Y", tz = "America/New_York")) %>%
+    dplyr::filter(Basis == "Customs",
+                  `Seasonal adjustment` == "Unadjusted",
+                  Release == max_date)
+  # ,
+  # str_detect(`North American Product Classification System (NAPCS)`, "\\[C11") |
+  #   str_detect(`North American Product Classification System (NAPCS)`, "\\[11") |
+  #   str_detect(`North American Product Classification System (NAPCS)`, "\\[211") |
+  #   str_detect(`North American Product Classification System (NAPCS)`, "\\[C221") |
+  #   str_detect(`North American Product Classification System (NAPCS)`, "\\[19") |
+  #   str_detect(`North American Product Classification System (NAPCS)`, "\\[18") |
+  #   str_detect(`North American Product Classification System (NAPCS)`, "\\[17") |
+  #   str_detect(`North American Product Classification System (NAPCS)`, "\\[12")) 
+      
+  
+  write_csv(trade, "Trade data monthly - table 12-10-0120.csv")
+  
+  imports <- trade %>%
+    dplyr::select(date, Trade, `North American Product Classification System (NAPCS)`, VALUE) %>%
+    dplyr::filter(Trade == "Import") %>%
+    spread(`North American Product Classification System (NAPCS)`, VALUE) %>%
+    arrange(desc(date)) 
+  
+  write_csv(imports, "Ag and food imports - monthly.csv")
+  
+  exports <- trade %>%
+    dplyr::select(date, Trade, `North American Product Classification System (NAPCS)`, VALUE) %>%
+    dplyr::filter(Trade == "Export") %>%
+    spread(`North American Product Classification System (NAPCS)`, VALUE) %>%
+    arrange(desc(date)) 
+  
+  write_csv(exports, "Ag and food exports - monthly.csv")
+  
+}
+
+
+```
+
+
+## Balance sheet of agriculture
+
+Annual data for the blance sheet of agriculture from Statistics Canada table 18-10-0032. The data are not available by province. The data are updated when a change is detected on Statistics Canada website. 
+
+- `Balance sheet annual - table 32-10-0056.csv`: Statistics Canada table 32-10-0056, raw data.
+
+```{r balance_sheet}
+
+if(32100056 %in% sc_changed_tb$productId){
+  
+  # Data
+  bs <- get_cansim("32-10-0056") %>%
+    tbl_df() 
+  
+  write_csv(bs, "Balance sheet annual - table 32-10-0056.csv")
+  
+}
+
+
+```
+
+
+## Farm Input Price Index
+
+Quarterly data for Farm Product Price Index from Statistics Canada table 18-10-0258. The data begin 2002 and the index is set with 2012 = 100. 
+
+- `Farm Input Price Index - table 18-10-0258.csv`: Statistics Canada table 18-10-0258, raw data.
+
+```{r fipi}
+
+if(18100258 %in% sc_changed_tb$productId){
+  
+  # Data
+  fipi <- get_cansim("18-10-0258") %>%
+    tbl_df() 
+  
+  write_csv(fipi, "Farm Input Price Index - table 18-10-0258.csv")
+  
+}
+
+
+```
+
+## OECD-FAO Agricultural Outlook
+
+
+### 2020 - 2029
+
+- `OECD-FAO Agricultural Outlook 2020-2029.csv`: [OECD-FAO Agricultural Outlook for 2020-2029](https://stats.oecd.org/Index.aspx?DataSetCode=HIGH_AGLINK_2019). The report is available at this [link](https://www.oecd-ilibrary.org/agriculture-and-food/oecd-fao-agricultural-outlook-2020-2029_1112c23b-en).
+
+
+## USDA FAS
+
+Data on production, supply and distribution of agricultural commodities for the U.S. and key producing and consuming countries.
+
+- `USDA FAS.csv`: 
+
+
+```{r fas}
+
+# Release dates
+list_dates <- as.Date(c("2020-08-12", "2020-09-11", "2020-10-09", "2020-11-10", "2020-12-10", "2020-12-11", "2020-12-18"))
+
+list_dates <- c(list_dates, list_dates + days(1), list_dates + days(2), list_dates + days(3), list_dates + days(5), list_dates + days(6), list_dates + days(7))
+
+if(today() %in% list_dates & Sys.time() - file.info("USDA FAS.csv")$mtime > days(8)){
+
+  url <- "https://apps.fas.usda.gov/psdonline/downloads/psd_alldata_csv.zip"
+  dest_zip <- paste(tempdir(), "\\", "psd_alldata_csv.zip", sep = "")
+  try(download.file(url, destfile = dest_zip, method = "auto"))
+
+  unzip(dest_zip, overwrite = TRUE)
+  
+  file.remove("USDA FAS.csv")
+  
+  file.rename("psd_alldata.csv", "USDA FAS.csv")
+  
+}
+ 
+
+
+```
