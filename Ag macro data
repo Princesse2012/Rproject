@@ -1,0 +1,90 @@
+title: "Ag macro data"
+author: "vb"
+output: 
+  html_document: 
+    self_contained: TRUE
+    toc: true
+    toc_depth: 3
+    toc_float: 
+      collapsed: TRUE
+    number_sections: FALSE
+    theme: spacelab
+    highlight: kate
+date: "`r format(Sys.time(), '%B %d, %Y')`"
+institute: Farm Credit Canada - Financement agricole Canada
+header-includes: 
+  - \widowpenalties 1 150
+classoption:
+  - dvipsnames
+  - table
+urlcolor: blue
+---
+
+```{r setup, include=FALSE}
+
+knitr::opts_chunk$set(echo=FALSE, fig.keep='high', out.width = '95%', fig.align = 'center', warning = FALSE, message = FALSE, results = "asis", root.dir = "C:/Users/pouliots/FCC-FAC/Ag Economics - Data") 
+
+#Load some packages - must first install these packages
+library(pacman)
+
+pacman::p_load("tidyverse")
+pacman::p_load("lubridate")
+pacman::p_load("readxl")
+pacman::p_load("openxlsx")
+pacman::p_load("Quandl")
+pacman::p_load("magick")
+pacman::p_load("pingr")
+pacman::p_load("fredr")
+pacman::p_load("cansim")
+#pacman::p_load("rvest")
+#pacman::p_load("zoo")
+#pacman::p_load("RSelenium")
+#pacman::p_load("here")
+
+#Download and install package for NASS Quick Stats
+#pacman::p_load("devtools")
+#install_github('potterzot/rnassqs')
+pacman::p_load(rnassqs)
+
+# Fred API key
+fredr_set_key("2df543b7feef1867ae95a0dfa70e3203")
+
+# Quandl API key
+Quandl.api_key("7AAyTLH2_znP3GsMC3p-")
+
+
+# Get the list of StatsCan tables that have changed
+sc_changed_tb <- get_cansim_changed_tables(file.info("Ag-macro-data.html")$mtime %>% as_date())
+
+for (i in as.character(seq(as_date(file.info("Ag-macro-data.html")$mtime), today(), "day"))){
+ sc_changed_tb <- bind_rows(sc_changed_tb, get_cansim_changed_tables(start_date = i))
+}
+
+sc_changed_tb <- sc_changed_tb %>%
+  distinct()
+
+
+# overwrite get_cansim function because the one from the package is not working
+
+get_cansim <- function(tab_number0){
+  
+  tab_number <- tab_number0 %>% str_remove_all("-")
+  url <- paste("https://www150.statcan.gc.ca/n1/tbl/csv/", tab_number, "-eng.zip", sep = "")
+  dest <- paste(tempdir(), "\\", tab_number, "-eng.zip", sep = "")
+  download.file(url, destfile = dest, method = "auto")
+  unzip(dest, paste(tab_number, ".csv", sep = ""), overwrite = TRUE, exdir = tempdir())
+  tab <- read_csv(paste(tempdir(), "\\", tab_number, ".csv", sep = ""))
+  
+  return(tab)
+  
+}
+
+# Setting to evaluate chunks
+set_eval <- TRUE
+
+```
+
+
+```{r child="Ag macro data source.Rmd", echo=FALSE}
+
+```
