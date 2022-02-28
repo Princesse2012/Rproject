@@ -1,0 +1,230 @@
+---
+title: "Assembling the Nielsen's data"
+author: "vb"
+output: html_document
+date: "`r format(Sys.time(), '%B %d, %Y')`"
+institute: Farm Credit Canada - Financement agricole Canada
+header-includes: 
+  - \widowpenalties 1 150
+classoption:
+  - dvipsnames
+  - table
+urlcolor: blue
+---
+
+```{r setup, include=FALSE}
+
+knitr::opts_chunk$set(echo=TRUE, fig.keep='high', out.width = '95%', fig.align = 'center', warning = FALSE, message = FALSE, results = "asis") # , dev='cairo_pdf' for pdf document
+
+# Options for pdf
+options(kableExtra.latex.load_packages = TRUE)
+
+# Load some packages - might need to install them the first time
+library(pacman)
+pacman::p_load("tidyverse")
+pacman::p_load("lubridate")
+pacman::p_load("readxl")
+pacman::p_load("openxlsx")
+pacman::p_load("here")
+
+source("Functions to prepare data.R")
+
+
+```
+
+This document assembles the Nielsen's food consumption data
+
+# Deli \& meat
+
+
+```{r deli}
+
+path1 <- "Deli & Meat"
+path2 <- "Deli & Meat DPR - PE May 25 19 - National only"
+date_value <- as_date("25-05-2019", format = "%d-%m-%Y", tz = "America/New_York")
+report_name <- "Deli & meat"
+
+dta_deli <- func_ass(path1, path2, date_value, report_name)
+
+dta <- dta_deli
+
+# Remove what are not categories
+# dta <- dta %>%
+#   dplyr::filter(!(Category %in% c("Total Deli & Meat", "Home Meal Replacement", "Processed Meat", "NATURAL CHEESE - EXACT WEIGHT DELI", "Total Imitation Seafood")),
+#                 !(`Category 2` %in% c("Total Deli & Meat", "Home Meal Replacement", "Processed Meat", "NATURAL CHEESE - EXACT WEIGHT DELI", "Total Imitation Seafood")))
+# 
+
+
+```
+
+
+# Beverages
+
+```{r beverages}
+
+path1 <- "Beverages"
+path2 <- "Beverages DPR - July 20 19 - National Only"
+date_value <- as_date("20-07-2019", format = "%d-%m-%Y", tz = "America/New_York")
+report_name <- "Beverages"
+
+dta_bev <- func_ass(path1, path2, date_value, report_name)
+
+dta <- bind_rows(dta, dta_bev)
+
+
+```
+
+# Bakery
+
+
+```{r bakery}
+
+path1 <- "Bakery"
+path2 <- "Bakery DPR - July 20 19 - National Only"
+date_value <- as_date("20-07-2019", format = "%d-%m-%Y", tz = "America/New_York")
+report_name <- "Bakery"
+
+dta_bak <- func_ass(path1, path2, date_value, report_name)
+
+dta <- bind_rows(dta, dta_bak)
+
+```
+
+# Baking needs
+
+
+```{r baking_needs}
+
+path1 <- "Baking needs"
+path2 <- "Baking Needs DPR PE Sept 14 19 - National Only"
+date_value <- as_date("14-09-2019", format = "%d-%m-%Y", tz = "America/New_York")
+report_name <- "Baking needs"
+
+dta_bn <- func_ass(path1, path2, date_value, report_name)
+
+dta <- bind_rows(dta, dta_bn)
+
+```
+
+
+# Frozen Foods
+
+
+```{r frozen_foods}
+
+path1 <- "Frozen foods"
+path2 <- "Frozen Foods DPR - August 17 19 - National Only"
+date_value <- as_date("17-08-2019", format = "%d-%m-%Y", tz = "America/New_York")
+report_name <- "Frozen foods"
+
+dta_ff <- func_ass(path1, path2, date_value, report_name)
+
+dta <- bind_rows(dta, dta_ff)
+
+```
+
+
+# Condiments and sauces
+
+```{r condiments_sauces}
+
+path1 <- "Condiments & Sauces"
+path2 <- "Condiments & Sauces DPR PE October 12 19 - National Only"
+date_value <- as_date("12-10-2019", format = "%d-%m-%Y", tz = "America/New_York")
+report_name <- "Condiments and sauces"
+
+dta_cs <- func_ass(path1, path2, date_value, report_name)
+
+dta <- bind_rows(dta, dta_cs)
+
+```
+
+
+# Refrigerated & Dairy
+
+```{r refrigerated_dairy}
+
+path1 <- "Refrigerated & Dairy"
+path2 <- "RefrigDairy DPR PE October 12 19 - National Only"
+date_value <- as_date("12-10-2019", format = "%d-%m-%Y", tz = "America/New_York")
+report_name <- "Refrigerated & Dairy"
+
+dta_rd <- func_ass(path1, path2, date_value, report_name)
+
+dta <- bind_rows(dta, dta_rd)
+
+```
+
+
+# Prepared Foods
+
+```{r prepared_foods}
+
+path1 <- "Prepared Foods"
+path2 <- "Prepared Foods DPR - PE Nov 9 19 - National Only"
+date_value <- as_date("09-11-2019", format = "%d-%m-%Y", tz = "America/New_York")
+report_name <- "Prepared Foods"
+
+dta_rd <- func_ass(path1, path2, date_value, report_name)
+
+dta <- bind_rows(dta, dta_rd)
+
+```
+
+# Snacks, confectionery & dessert
+
+```{r scd}
+
+path1 <- "Snacks, confectionery & dessert"
+path2 <- "SCD DPR - PE Nov 9 19 - National Only"
+date_value <- as_date("09-11-2019", format = "%d-%m-%Y", tz = "America/New_York")
+report_name <- "Snacks, confectionery & dessert"
+
+dta_scd <- func_ass(path1, path2, date_value, report_name)
+
+dta <- bind_rows(dta, dta_scd)
+
+```
+
+
+# Modify some categories' names
+
+```{r}
+
+
+dta <- dta %>%
+  mutate(Category = str_replace(Category, "Rte ", "RTE "),
+         Category = str_replace(Category, "Rtd ", "RTD "),
+         Category = str_replace(Category, "C&b", "C&B"))
+
+
+
+```
+
+
+# Save data
+
+
+```{r save}
+
+write.csv(dta, "Nielsen data.csv")
+
+# # Data where manufacturer name is available
+# 
+# 
+# pacman::p_load(magrittr)
+# pacman::p_load(xlsx)
+# 
+# dta_m <- dta %>%
+#   dplyr::filter(!is.na(Manufacturer) | !is.na(Brand) | !is.na(Item)) %>%
+#   dplyr::select(-Department, -`Sub-Department`,-`Category 2`) %>%
+#   pivot_wider(names_from = c("Var", "Units"), values_from = "Value") %>%
+#   dplyr::select(`Report Date`, everything(), -Date)
+#   
+# write.xlsx(dta_m, "Nielsen data - manufacturers.xlsx", row.names = TRUE)
+# 
+
+
+
+```
+
