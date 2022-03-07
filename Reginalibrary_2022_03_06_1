@@ -1,0 +1,157 @@
+#imports the math library
+import math
+
+print ("The value of Pi is")
+#calls one of the math operations from that library: math.pi
+print (math.pi)
+
+print ("There's even another way to")
+print ("do power, with math.pow")
+#refer to another function from the library: math.pow.
+print (math.pow(2, 2) )
+
+print ("New " + "York")
+print ("and over " * 3)
+
+#You can create a horizontal line composed of
+#a repeated character by specifying the character,
+#a multiplication operator (*),
+#and the number of times it should be repeated.
+
+#Try this out to see for yourself:
+
+"=" * 80
+
+word = "My words are important!"
+print (len(word))
+# There are also functions that let you search a string
+
+# for a particular substring (find), break strings into substrings (split),
+# remove white space from the ends of your string (strip),
+# tell if the letters are uppercase (isupper),
+# or convert all letters to lowercase (lower).
+# There isn’t time or space to cover each one of these functions gere,
+# but be aware that if you're trying to manipulate your strings,
+# there's probably a function that'll make your work easier.
+# Example 1: Convert a string to lowercase
+message = 'PYTHON IS FUN'
+# convert message to lowercase
+print(message.lower())
+# example string
+string = "THIS SHOULD BE LOWERCASE!"
+print(string.lower())
+# string with numbers
+# all alphabets should be lowercase
+string = "Th!s Sh0uLd B3 L0w3rCas3!"
+print(string.lower())
+
+# Example 2: How lower() is used in a program?
+# first string
+firstString = "PYTHON IS AWESOME!"
+# second string
+secondString = "PyThOn Is AwEsOmE!"
+if(firstString.lower() == secondString.lower()):
+    print("The strings are same.")
+else:
+    print("The strings are not same.")
+# Note: If you want to convert to uppercase string, use upper().
+# You can also use swapcase() to swap between lowercase to uppercase.
+# https://docs.python.org/3/library/stdtypes.html#string-methods
+# Indexing and Slicing
+# Indexing
+#Asking for the first letter in the phrase variable
+phrase = "Python rocks"
+print (phrase [0] )
+#you cannot use index to put a new character in a certain position
+#phrase [0] = 'p'
+# But that's okay. You can accomplish the same thing by doing this:
+phrase = 'p' + phrase [1:]
+# Slicing
+# get a range of characters out of the string
+
+phrase = "Python rocks"
+print (phrase [1:3] )
+print (phrase [7:11] )
+print (phrase [7:] )
+#Yes, Python 3 requires us to make use of the end attribute
+# to replace the standard end (a carriage return)
+# with a blank space. Consider the following code
+# that will display the numbers 1 and 2 on the same line:
+
+value1 = 1
+value2 = 2
+print(value1, end=" ")
+print(value2, end=" ")
+
+# Introduction to Python Programming
+# Lesson 02 Assignment
+# Sample Solution
+
+# Get phrase from user
+phrase = input("Please enter a phrase: ")
+
+# Now get starting and ending positions
+startNum = int(input("Please enter the starting position: "))
+endNum = int(input("Please enter the ending position: "))
+
+# Finally print out the slice
+print (phrase[startNum:endNum+1])
+
+# NOTE: Some may want to show the character at the last position
+#   to the user.  In that case, the above print statement would be:
+# print (phrase[len(phrase)-1:len(phrase)])
+
+# Chapter 1: The if Statement
+age = 10
+if age == 10:
+    print ("ten")
+print ("how's that?")
+# A String Example
+name = "me"
+if name == "me":
+    print ("the same")
+# only they're compared in alphabetical order
+letter = "C"
+if letter < "D":
+    print ("less than D")
+
+if letter > "B":
+    print ("greater than B")
+# Unicode Character Order, ASCII,
+# which is a subset of Unicode Unicode” to find a copy of the table. Here’s the important part: notice that in Unicode,
+# all the uppercase letters come before any of the lowercase letters
+letter = "C"
+if letter < "a":
+    print ("less than a")
+# Compound Conditions  
+# The And Operator
+# In our voting example, we'd want to use
+# the And operator to require that the user be at least 18 and
+# registered to vote.
+# Here's what the code looks like now
+age = int(input("How old are you? "))
+registered = input("Are you registered? (y/n) ")
+
+if age >= 18 and registered == "y":
+    print ("You are ready to vote!")
+else:
+    print ("You are not ready to vote.")
+# The Or Operator
+if choice == "Y" or choice == "y":
+    
+# A Weekly Pay Example
+rate = int(input("What is your hourly wage? "))
+hours = int(input("How many hours did you work? "))
+
+if hours <= 40:
+    pay = hours * rate
+else:
+    pay = hours * rate
+    overtimeHours = hours - 40
+    overtimePay = overtimeHours * (rate * 0.5)
+    pay = pay + overtimePay
+
+print ("Your weekly pay is:", pay)
+# How does this code look? Notice the final line of the program:
+
+print ("Your weekly pay is:", pay)
